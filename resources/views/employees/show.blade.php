@@ -20,6 +20,9 @@
                                     <option value="offer_letter">Offer Letter</option>
                                     <option value="appointment_letter">Appointment Letter</option>
                                     <option value="experience_letter">Experience Letter</option>
+                                    <option value="appraisal_letter">Appraisal Letter</option>
+                                    <option value="confirmation_letter">Confirmation Letter</option>
+                                    <option value="relieving_letter">Relieving Letter</option>
                                 </select>
                             </div>
                         </div>
@@ -36,7 +39,7 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th>Company:</th>
-                                    <td>{{ optional($employee->company)->name ?? 'N/A' }}</td>
+                                    <td>{{ optional($employee->company)->company_name ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Full Name:</th>
@@ -69,58 +72,63 @@
                             <!-- Dynamic Document Form -->
                             <div id="documentForm" class="mt-4" style="display: none;">
                                 <h5 class="mb-3" id="documentTitle"></h5>
-                                <form>
+                                <form id="documentGenerateForm" method="POST">
+                                    @csrf
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label for="documentDate" class="form-label">Date</label>
-                                            <input type="date" class="form-control" id="documentDate">
+                                            <input type="date" class="form-control" id="documentDate" name="document_date" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label for="documentSalary" class="form-label">Salary</label>
-                                            <input type="text" class="form-control" id="documentSalary">
+                                            <input type="text" class="form-control" id="documentSalary" name="document_salary" required>
                                         </div>
                                     </div>
                                     <div class="mt-3">
-                                        <button type="submit" class="btn btn-primary">Generate Document</button>
+                                        <button type="button" id="generateLetterBtn" class="btn btn-primary">
+                                            Generate Document
+                                        </button>
                                     </div>
                                 </form>
+                            </div>
+
+                            <!-- Generated Documents List -->
+                            <div class="mt-4">
+                                <h5 class="mb-3">Generated Documents</h5>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Letter Type</th>
+                                            <th>Generated At</th>
+                                            <th>Download</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($generatedDocuments as $index => $document)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ ucfirst(str_replace('_', ' ', $document->document_title)) }}</td>
+                                                <td>{{ $document->created_at->format('d M Y, H:i A') }}</td>
+                                                <td>
+                                                    <a href="{{ route('documents.download', $document->id) }}" class="btn btn-sm btn-success">
+                                                        Download
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="text-center">No documents generated yet.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
 
                             <a href="{{ route('employees.index') }}" class="btn btn-secondary mt-3">Back to List</a>
                         </div>
                     </div>
-
-                    <!-- Salary Slip Section -->
-                    <div class="card mt-4">
-                        <div class="card-header">
-                            <h4 class="card-title mb-0">Salary Slip</h4>
-                        </div>
-                        <div class="card-body">
-                            <form id="salarySlipForm">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label for="salaryMonth" class="form-label">Month</label>
-                                        <input type="month" class="form-control" id="salaryMonth">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="leaveDays" class="form-label">Leave Days</label>
-                                        <input type="number" class="form-control" id="leaveDays">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="netSalary" class="form-label">Net Salary</label>
-                                        <input type="text" class="form-control" id="netSalary">
-                                    </div>
-                                </div>
-                                <div class="mt-3 text-end">
-                                    <button type="button" id="generatePdf" class="btn btn-danger">
-                                        <i class="ri-file-pdf-line"></i> Generate PDF
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -130,61 +138,30 @@
             let documentType = document.getElementById("documentType");
             let documentForm = document.getElementById("documentForm");
             let documentTitle = document.getElementById("documentTitle");
+            let generateLetterBtn = document.getElementById("generateLetterBtn");
 
             documentType.addEventListener("change", function () {
                 let selectedValue = this.value;
-
                 if (selectedValue) {
                     documentForm.style.display = "block";
-                    if (selectedValue === "offer_letter") {
-                        documentTitle.innerText = "Offer Letter Details";
-                    } else if (selectedValue === "appointment_letter") {
-                        documentTitle.innerText = "Appointment Letter Details";
-                    } else if (selectedValue === "experience_letter") {
-                        documentTitle.innerText = "Experience Letter Details";
-                    }
+                    documentTitle.innerText = selectedValue.replace("_", " ").toUpperCase() + " Details";
                 } else {
                     documentForm.style.display = "none";
                 }
             });
 
-            // Generate PDF for Salary Slip
-            document.getElementById("generatePdf").addEventListener("click", function () {
-                let salaryMonth = document.getElementById("salaryMonth").value;
-                let leaveDays = document.getElementById("leaveDays").value;
-                let netSalary = document.getElementById("netSalary").value;
-
-                if (!salaryMonth || !leaveDays || !netSalary) {
-                    alert("Please fill all salary slip details.");
+            // Handle document generation
+            generateLetterBtn.addEventListener("click", function () {
+                let selectedDocument = documentType.value;
+                if (!selectedDocument) {
+                    alert("Please select a document type.");
                     return;
                 }
 
-                fetch("{{ route('employees.generateSalaryPdf', $employee->id) }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        month: salaryMonth,
-                        leave_days: leaveDays,
-                        salary: netSalary
-                    })
-                })
-                .then(response => response.blob())
-                .then(blob => {
-                    let url = window.URL.createObjectURL(blob);
-                    let a = document.createElement("a");
-                    a.href = url;
-                    a.download = "SalarySlip.pdf";
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                })
-                .catch(error => {
-                    alert("Error generating PDF.");
-                    console.error(error);
-                });
+                let url = "{{ route('employees.generateEmployeeLetter', ['id' => $employee->id, 'letterType' => '__LETTER_TYPE__']) }}";
+                url = url.replace("__LETTER_TYPE__", selectedDocument);
+
+                window.location.href = url;
             });
         });
     </script>

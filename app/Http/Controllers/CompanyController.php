@@ -1,24 +1,34 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Template;
 
 class CompanyController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $companies = Company::all(); // Fetch all companies
-        $selectedCompanyId = session('selected_company', $companies->first()->id ?? null);
+        // Fetch all companies
+        $companies = Company::all();
+
+        // Fetch all templates
+        $templates = Template::all();
+
+        // Get company_id from request or use the first company's ID as default
+        $selectedCompanyId = $request->query('company_id', optional($companies->first())->id);
+
+        // Fetch employees for the selected company
         $employees = Employee::where('company_id', $selectedCompanyId)->get();
 
-        return view('dashboard', compact('companies', 'employees', 'selectedCompanyId'));
+        // Get selected company details
+        $selectedCompany = $companies->firstWhere('id', $selectedCompanyId);
+
+        return view('companies.index', compact('templates', 'companies', 'employees', 'selectedCompany', 'selectedCompanyId'));
     }
-
-
-
-    // ✅ Add this method
     public function create()
     {
         return view('companies.create');
@@ -29,6 +39,7 @@ class CompanyController extends Controller
         $request->validate([
             'company_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'letterhead' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $company = new Company();
@@ -38,10 +49,12 @@ class CompanyController extends Controller
         $company->save();
 
         if ($request->hasFile('logo')) {
-            $file = $request->file('logo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/logos'), $filename);
-            $company->logo = 'uploads/logos/' . $filename;
+            $company->logo = $request->file('logo')->store('logos', 'public');
+            $company->save();
+        }
+
+        if ($request->hasFile('letterhead')) {
+            $company->letterhead = $request->file('letterhead')->store('letterheads', 'public');
             $company->save();
         }
 
@@ -58,6 +71,8 @@ class CompanyController extends Controller
     {
         $request->validate([
             'company_name' => 'required|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'letterhead' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $company = Company::findOrFail($id);
@@ -68,29 +83,33 @@ class CompanyController extends Controller
         $company->company_status = $request->company_status;
 
         if ($request->hasFile('logo')) {
-            $file = $request->file('logo');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/logos'), $filename);
-            $company->logo = 'uploads/logos/' . $filename;
+            if ($company->logo) {
+                Storage::disk('public')->delete($company->logo);
+            }
+            $company->logo = $request->file('logo')->store('logos', 'public');
+        }
+
+        if ($request->hasFile('letterhead')) {
+            if ($company->letterhead) {
+                Storage::disk('public')->delete($company->letterhead);
+            }
+            $company->letterhead = $request->file('letterhead')->store('letterheads', 'public');
         }
 
         $company->save();
         return redirect()->route('companies.index')->with('success', 'Company updated successfully.');
     }
 
-    public function show($id)
-    {
-        $company = Company::findOrFail($id);
-        return view('companies.show', compact('company'));
-    }
-
     public function destroy($id)
     {
         $company = Company::findOrFail($id);
 
-        // Delete logo file if exists
-        if ($company->logo && file_exists(public_path($company->logo))) {
-            unlink(public_path($company->logo));
+        if ($company->logo) {
+            Storage::disk('public')->delete($company->logo);
+        }
+
+        if ($company->letterhead) {
+            Storage::disk('public')->delete($company->letterhead);
         }
 
         $company->delete();
@@ -100,35 +119,29 @@ class CompanyController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('selected_companies', []);
-
         if (!empty($ids)) {
             Company::whereIn('id', $ids)->delete();
             return redirect()->back()->with('success', 'Selected companies deleted successfully!');
         }
-
         return redirect()->back()->with('error', 'No companies selected for deletion.');
     }
 
     public function switchCompany(Request $request)
-{
-    $requestCompanyId = $request->company_id;
-    // $abc=Employee::where('company_id',$requestCompanyId)->get();
-    // dd($abc);
-    $sessionCompanyId = session('selected_company');
+    {
+        // Get all companies
+        $companies = Company::all();
 
-    \Log::info('Request Company ID: ' . $requestCompanyId);
-    \Log::info('Session Before: ' . $sessionCompanyId);
+        // Get company_id from request or use the first company's ID as default
+        $companyId = $request->query('company_id', optional($companies->first())->id);
 
-    // Only update session if there's a change
-    if ($requestCompanyId != $sessionCompanyId) {
-        session(['selected_company' => $requestCompanyId]);
-
-        \Log::info('Session After: ' . session('selected_company'));
+        // Redirect to the employee list page with selected company_id
+        return redirect()->route('employees.index', ['company_id' => $companyId]);
     }
+    public function setCompany(Request $request)
+    {
+        $companyId = $request->query('company_id'); // Get company_id from URL
 
-    return redirect()->back();
-}
-
-    
-    
+        // Redirect to the appropriate page with selected company_id
+        return redirect()->back()->withInput(['company_id' => $companyId]);
+    }
 }

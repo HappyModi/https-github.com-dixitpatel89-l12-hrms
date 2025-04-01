@@ -31,7 +31,7 @@
                                     <div class="col-sm">
                                         <div class="d-flex justify-content-sm-end">
                                             <div class="search-box ms-2">
-                                                <input type="text" class="form-control search" placeholder="Search...">
+                                            <input type="text" class="form-control search" id="searchInput" placeholder="Search...">
                                                 <i class="ri-search-line search-icon"></i>
                                             </div>
                                         </div>
@@ -71,35 +71,32 @@
                                                     <td>{{ $employee->phone_number ?? 'N/A' }}</td>
                                                     <td>{{ $employee->employment_date }}</td>
                                                     <td>
-                                                        <button class="border-0 bg-transparent toggle-status"
-                                                            data-id="{{ $employee->id }}"
-                                                            data-status="{{ $employee->status == 'Active' ? 'Inactive' : 'Active' }}">
+                                                        <button class="border-0 bg-transparent toggle-status" data-id="{{ $employee->id }}"
+                                                            data-status="{{ $employee->status }}">
                                                             @if ($employee->status == 'Active')
-                                                                <i class="ri-toggle-fill text-danger fs-2"></i>
+                                                                <i class="ri-toggle-fill text-success fs-2"></i>
                                                             @else
-                                                                <i class="ri-toggle-line text-success fs-2"></i>
+                                                                <i class="ri-toggle-line text-danger fs-2"></i>
                                                             @endif
                                                         </button>
                                                     </td>
 
-
-
-
                                                     <td>
                                                         <div class="d-flex gap-2">
-                                                            <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-sm btn-primary px-3 py-1">View</a>
+                                                            <a href="{{ route('employees.show', $employee->id) }}"
+                                                                class="btn btn-sm btn-primary px-3 py-1">View</a>
+                                                            <a href="{{ route('employees.edit', $employee->id) }}"
+                                                                class="btn btn-sm btn-success px-3 py-1">Edit</a>
 
-                                                            <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-sm btn-success px-3 py-1">Edit</a>
-
-                                                            <form action="{{ route('employees.destroy', $employee->id) }}" method="POST"
-                                                                onsubmit="return confirm('Are you sure you want to delete this employee?');">
+                                                            <form action="{{ route('employees.destroy', $employee->id) }}"
+                                                                method="POST" class="delete-form">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn btn-sm btn-danger px-3 py-1">Remove</button>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-danger px-3 py-1 delete-employee">Remove</button>
                                                             </form>
                                                         </div>
                                                     </td>
-
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -125,112 +122,137 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Search Functionality
-            document.querySelector(".search").addEventListener("input", function () {
-                let searchValue = this.value.toLowerCase();
-                let rows = document.querySelectorAll("#employeeTable tbody tr");
-                let noResultDiv = document.querySelector(".noresult");
-                let found = false;
 
-                rows.forEach(row => {
-                    let rowText = row.textContent.toLowerCase();
-                    if (rowText.includes(searchValue)) {
-                        row.style.display = "";
-                        found = true;
-                    } else {
-                        row.style.display = "none";
-                    }
-                });
-
-                noResultDiv.style.display = found ? "none" : "block";
-            });
-
-            // Select All Checkbox
-            document.getElementById("checkAll").addEventListener("click", function () {
-                let checkboxes = document.querySelectorAll(".checkbox-item");
-                checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-            });
-
-            // Delete Selected Employees
-            document.getElementById("deleteSelected").addEventListener("click", function () {
-                let selectedIds = [];
-                document.querySelectorAll(".checkbox-item:checked").forEach(checkbox => {
-                    selectedIds.push(checkbox.value);
-                });
-
-                if (selectedIds.length > 0 && confirm("Are you sure you want to delete selected employees?")) {
-                    fetch("{{ route('employees.deleteMultiple') }}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ ids: selectedIds })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("Employees deleted successfully!");
-                                location.reload();
-                            } else {
-                                alert("Error deleting employees.");
-                            }
-                        });
-                }
-            });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".toggle-status").forEach(button => {
-                button.addEventListener("click", function () {
-                    let employeeId = this.getAttribute("data-id");
-                    let newStatus = this.getAttribute("data-status");
+            // Handle "Remove" Button Click
+            document.querySelectorAll(".delete-employee").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    let form = this.closest("form");
 
                     Swal.fire({
                         title: "Are you sure?",
-                        text: "You want to change the status!",
+                        text: "This action cannot be undone!",
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "Yes, Change it!"
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, delete"
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            fetch(`/employees/${employeeId}/status`, {
-                                method: "POST",
-                                headers: {
-                                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({ status: newStatus })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        Swal.fire({
-                                            title: "Updated!",
-                                            text: `Employee status changed to ${newStatus}.`,
-                                            icon: "success",
-                                            timer: 2000,
-                                            showConfirmButton: false
-                                        });
-
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 2000);
-                                    } else {
-                                        Swal.fire("Error!", "Status change failed.", "error");
-                                    }
-                                });
+                            form.submit();
                         }
                     });
                 });
             });
+
         });
 
+        document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".toggle-status").forEach(button => {
+        button.addEventListener("click", function () {
+            let employeeId = this.getAttribute("data-id");
+            let buttonElement = this;
+
+            fetch(`/employees/${employeeId}/toggle-status`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "Active") {
+                    buttonElement.innerHTML = '<i class="ri-toggle-fill text-success fs-2"></i>';
+                } else {
+                    buttonElement.innerHTML = '<i class="ri-toggle-line text-danger fs-2"></i>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Search functionality
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        let searchValue = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#employeeTable tbody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            if (text.includes(searchValue)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        // Show "No Result Found" message if no rows match
+        let visibleRows = [...rows].some(row => row.style.display !== "none");
+        document.querySelector(".noresult").style.display = visibleRows ? "none" : "block";
+    });
+});
 
 
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+// Handle "Select All" Checkbox
+document.getElementById("checkAll").addEventListener("change", function () {
+    let checkboxes = document.querySelectorAll(".checkbox-item");
+    checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+});
+
+// Handle "Delete Selected" Button Click
+document.getElementById("deleteSelected").addEventListener("click", function () {
+    let selectedIds = [];
+    document.querySelectorAll(".checkbox-item:checked").forEach(checkbox => {
+        selectedIds.push(checkbox.value);
+    });
+
+    if (selectedIds.length === 0) {
+        Swal.fire("No Employee Selected", "Please select at least one employee to delete.", "warning");
+        return;
+    }
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This action cannot be undone!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch("{{ route('employees.bulkDelete') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+                },
+                body: JSON.stringify({ employee_ids: selectedIds })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    selectedIds.forEach(id => {
+                        document.querySelector(`input[value="${id}"]`).closest("tr").remove();
+                    });
+                    Swal.fire("Deleted!", "Selected employees have been deleted.", "success");
+                } else {
+                    Swal.fire("Error", "Something went wrong. Try again.", "error");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+});
+
+});
+</script>
 
 
-    </script>
 @endsection

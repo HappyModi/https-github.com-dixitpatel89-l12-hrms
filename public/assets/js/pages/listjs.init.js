@@ -431,3 +431,7 @@ var attroptions = {
         page: 3,
         pagination: !0,
     });
+    if (typeof list !== 'undefined' && list.items) {
+        console.log(list.items);
+    }
+    

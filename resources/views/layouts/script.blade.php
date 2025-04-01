@@ -14,6 +14,10 @@
 <!-- Dashboard init -->
 <script src="{{ asset('assets/js/pages/dashboard.init.js') }}"></script>
 <!-- App js -->
+<script src="{{ asset('assets/libs/@ckeditor/ckeditor5-build-classic/build/ckeditor.js') }}"></script>
+
+<!-- init js -->
+<script src="{{ asset('assets/js/pages/form-editor.init.js') }}"></script>
 <script src="{{ asset('assets/js/app.js') }}"></script>
 <!-- Toastr JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -26,4 +30,6 @@
 <script src="{{ asset('assets/js/pages/listjs.init.js') }}"></script>
 
 <!-- Sweet Alerts js -->
-<script src="{{ asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+

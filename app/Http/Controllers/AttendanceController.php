@@ -16,17 +16,15 @@ class AttendanceController extends Controller
     }
 
     public function create()
-{
-    // Get the latest company ID from the session
-    $companyId = session('selected_company_id', auth()->user()->company_id);
+    {
+        // Get the authenticated user's company ID
+        $companyId = auth()->user()->company_id;
 
-    // Fetch employees based on the selected company ID
-    $employees = Employee::where('company_id', $companyId)->get();
+        // Fetch employees based on the authenticated user's company ID
+        $employees = Employee::where('company_id', $companyId)->get();
 
-   
-
-    return view('attendance.create', compact('employees'));
-}
+        return view('attendance.create', compact('employees'));
+    }
 
 
 

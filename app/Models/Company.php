@@ -10,7 +10,7 @@ class Company extends Model
     use HasFactory;
 
     protected $fillable = [
-        'company_id','company_name', 'company_email', 'company_phone_number',
+        'company_id','company_name', 'company_email','letterhead','company_phone_number',
         'address_line_1', 'address_line_2', 'website', 'industry',
         'company_description', 'company_status', 'company_type',
         'company_registration_number', 'company_tax_id', 'company_country',
@@ -33,6 +33,10 @@ class Company extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+    public function templates()
+    {
+        return $this->hasMany(Template::class);
     }
 
 }

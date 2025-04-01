@@ -9,9 +9,16 @@ use Illuminate\Http\Request;
 class CompanyUserController extends Controller
 {
     // Show User List
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('company')->get();
+        // Get selected company_id from URL, fallback to authenticated user's company_id
+        $companyId = $request->query('company_id', auth()->user()->company_id);
+
+        // Fetch users of the selected company and eager load the company relation
+        $users = User::where('company_id', $companyId)
+                    ->with('company')
+                    ->get();
+
         return view('company_users.index', compact('users'));
     }
 

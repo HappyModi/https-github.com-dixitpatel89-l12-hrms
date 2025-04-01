@@ -132,6 +132,20 @@
             <div class="form-group"><label>CIN Number</label><input type="text" name="cin_number"></div>
             <div class="form-group"><label>PAN Number</label><input type="text" name="company_pan_number"></div>
             <div class="form-group"><label>Founded Date</label><input type="date" name="founded_date"></div>
+            
+            <!-- Letterhead Upload -->
+            <div class="form-group">
+                <label>Upload Letterhead</label>
+                <input type="file" name="letterhead">
+            </div>
+            
+            <!-- Display Existing Letterhead -->
+            @if(isset($company->letterhead))
+                <div class="form-group">
+                    <label>Current Letterhead</label>
+                    <img src="{{ asset('storage/'.$company->letterhead) }}" class="img-thumbnail" width="200">
+                </div>
+            @endif
         </div>
         
         <div class="text-center mt-4">

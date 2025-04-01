@@ -36,26 +36,18 @@
             <div class="d-flex align-items-center">
                 <!-- 🔹 Company Switcher Form -->
                 <div class="ms-1 header-item d-none d-sm-flex">
-                <form action="{{ route('switch.company') }}" method="POST" class="inline-block">
-    @csrf
-    <div class="relative">
-        <label for="companySelect" class="block text-sm font-medium text-gray-700">
-            Switch Company
-        </label>
-        <select name="company_id" id="companySelect"
-            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            onchange="this.form.submit()">
-            @foreach($companies as $company)
-                <option value="{{ $company->id }}" {{ session('selected_company') == $company->id ? 'selected' : '' }}>
-                    {{ $company->company_name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+                <form method="GET" action="{{ route('switch.company') }}">
+    <label for="companySelect">Switch Company</label>
+    <select name="company_id" id="companySelect" onchange="this.form.submit()">
+        @foreach($companies as $company)
+            <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                {{ $company->company_name }}
+            </option>
+        @endforeach
+    </select>
 </form>
-
-
                 </div>
+              
 
                 <!-- 🔹 Profile Dropdown -->
                 <div class="dropdown header-item">
