@@ -10,6 +10,7 @@ return new class extends Migration {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('company_name');
+            $table->string('letterhead')->nullable();
             $table->string('company_email')->unique();
             $table->string('company_phone_number')->nullable();
             $table->string('address_line_1')->nullable();
@@ -30,7 +31,7 @@ return new class extends Migration {
             $table->string('company_support_email')->nullable();
             $table->string('company_support_phone')->nullable();
             $table->string('company_legal_name')->nullable();
-            $table->unsignedBigInteger('company_parent_id')->nullable();
+            // $table->unsignedBigInteger('company_parent_id')->nullable();
             $table->integer('company_branch_count')->default(0);
             $table->string('company_fax_number')->nullable();
             $table->string('company_social_facebook')->nullable();
@@ -55,6 +56,7 @@ return new class extends Migration {
             $table->date('founded_date')->nullable();
             $table->string('logo')->nullable();
             $table->timestamps();
+
         });
     }
 

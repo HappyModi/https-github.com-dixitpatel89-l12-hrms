@@ -16,7 +16,7 @@ class Company extends Model
         'company_registration_number', 'company_tax_id', 'company_country',
         'company_city', 'company_state', 'company_zip_code', 'company_hr_contact',
         'company_finance_contact', 'company_support_email', 'company_support_phone',
-        'company_legal_name', 'company_parent_id', 'company_branch_count',
+        'company_legal_name', 'company_branch_count',
         'company_fax_number', 'company_social_facebook', 'company_social_linkedin',
         'company_social_twitter', 'company_ceo_name', 'company_ceo_email',
         'company_board_members', 'company_business_hours', 'company_emergency_contact',

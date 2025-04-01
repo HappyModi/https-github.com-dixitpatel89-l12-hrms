@@ -9,11 +9,10 @@ return new class extends Migration {
     {
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Offer Letter, Appointment Letter, etc.
-            $table->text('letter_body'); // Letter content with placeholders
             $table->unsignedBigInteger('company_id'); // Company ID for multi-company support
+            $table->string('name')->nullable(); // Offer Letter, Appointment Letter, etc.
+            $table->text('letter_body')->nullable(); // Letter content with placeholders
             $table->timestamps();
-
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }

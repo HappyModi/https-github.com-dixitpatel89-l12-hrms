@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('company_id');
             // Roles can be stored in various ways. Here, we store them as JSON or text
             $table->text('roles')->nullable(); // e.g. ["Super Admin","Employee"]
 
             // Personal Information
             $table->string('full_name')->nullable();
             $table->string('employee_email')->unique();
+            $table->string('phone_number')->nullable();
             $table->decimal('salary', 10, 2)->nullable();
 
             // Emergency Contact
@@ -58,6 +60,7 @@ return new class extends Migration
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
 
             $table->timestamps();
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
         });
     }
 
