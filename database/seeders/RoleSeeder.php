@@ -11,10 +11,10 @@ class RoleSeeder extends Seeder
     public function run()
     {
         // Create roles using firstOrCreate to avoid duplicates
-        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin']);
-        $companyAdmin = Role::firstOrCreate(['name' => 'Company Admin']);
-        $hrAdmin = Role::firstOrCreate(['name' => 'HR Admin']);
-
+        $superAdmin = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
+        $companyAdmin = Role::firstOrCreate(['name' => 'Company Admin', 'guard_name' => 'web']);
+        $hrAdmin = Role::firstOrCreate(['name' => 'HR Admin', 'guard_name' => 'web']);
+        
         // Define permissions
         $permissions = [
             'manage users',

@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
-class AdminSeeder extends Seeder
+class hradminseeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,17 +15,17 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         $user = User::updateOrCreate(
-            ['email' => 'superadmin@gmail.com'], // Check if user already exists
+            ['email' => 'hradmin@gmail.com'], // Check if user already exists
             [
                 'company_id' => 1,
-                'name' => 'Super Admin',
-                'password' => Hash::make('superadmin@gmail.com'),
+                'name' => 'HR Admin',
+                'password' => Hash::make('hradmin@gmail.com'),
             ]
         );
 
         // Ensure the role is assigned only if not already assigned
-        if (!$user->hasRole('Super Admin')) {
-            $user->assignRole('Super Admin');
+        if (!$user->hasRole('HR Admin')) {
+            $user->assignRole('HR Admin');
         }
     }
 }

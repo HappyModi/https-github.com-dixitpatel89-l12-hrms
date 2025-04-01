@@ -57,6 +57,7 @@
                             <img class="rounded-circle header-profile-user" src="{{ asset('logo.png') }}" alt="User Avatar">
                             <span class="text-start ms-xl-2">
                                 <span class="d-none d-xl-inline-block fw-medium user-name-text fs-16">
+                                   
                                     {{ Auth::user()->name ?? 'Guest' }}
                                     <i class="las la-angle-down fs-12 ms-1"></i>
                                 </span>
