@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+
+@include('components.profile-dropdown')
+
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -25,6 +28,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased">
+
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900 d-flex">
         <!-- Sidebar -->
         <nav class="bg-dark text-white p-3" style="min-width: 250px;">

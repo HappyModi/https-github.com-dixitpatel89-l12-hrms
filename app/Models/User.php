@@ -47,9 +47,12 @@ class User extends Authenticatable
     /**
      * Relationship: A user belongs to a company.
      */
-    public function company()
+
+
+    public function companies()
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsToMany(Company::class);
     }
+    
 
 }

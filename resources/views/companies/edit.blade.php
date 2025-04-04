@@ -1,14 +1,12 @@
 @extends('layouts.master')
 
 @section('content')
-@section('content')
-        <div class="page-content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-header">
-
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
                             <h4 class="card-title mb-0">Edit Company</h4>
                         </div>
 
@@ -36,76 +34,108 @@
                                         <input type="text" name="company_phone_number" id="company_phone_number" class="form-control" value="{{ $company->company_phone_number }}">
                                     </div>
 
-                                    <!-- Address -->
+                                    <!-- Company Status -->
                                     <div class="col-md-6">
-                                        <label for="company_address" class="form-label">Address</label>
-                                        <input type="text" name="company_address" id="company_address" class="form-control" value="{{ $company->company_address }}">
-                                    </div>
-
-                                    <!-- Website -->
-                                    <div class="col-md-6">
-                                        <label for="company_website" class="form-label">Website</label>
-                                        <input type="text" name="company_website" id="company_website" class="form-control" value="{{ $company->company_website }}">
-                                    </div>
-
-                                    <!-- Established Year -->
-                                    <div class="col-md-6">
-                                        <label for="company_established" class="form-label">Established Year</label>
-                                        <input type="number" name="company_established" id="company_established" class="form-control" value="{{ $company->company_established }}">
-                                    </div>
-
-                                    <!-- CEO Name -->
-                                    <div class="col-md-6">
-                                        <label for="company_ceo" class="form-label">CEO Name</label>
-                                        <input type="text" name="company_ceo" id="company_ceo" class="form-control" value="{{ $company->company_ceo }}">
-                                    </div>
-
-                                    <!-- Number of Employees -->
-                                    <div class="col-md-6">
-                                        <label for="company_employees" class="form-label">Number of Employees</label>
-                                        <input type="number" name="company_employees" id="company_employees" class="form-control" value="{{ $company->company_employees }}">
-                                    </div>
-
-                                    <!-- Revenue -->
-                                    <div class="col-md-6">
-                                        <label for="company_revenue" class="form-label">Revenue</label>
-                                        <input type="text" name="company_revenue" id="company_revenue" class="form-control" value="{{ $company->company_revenue }}">
-                                    </div>
-
-                                    <!-- Industry -->
-                                    <div class="col-md-6">
-                                        <label for="company_industry" class="form-label">Industry</label>
-                                        <input type="text" name="company_industry" id="company_industry" class="form-control" value="{{ $company->company_industry }}">
-                                    </div>
-
-                                    <!-- Status -->
-                                    <div class="col-md-6">
-                                        <label for="company_status" class="form-label">Status</label>
+                                        <label for="company_status" class="form-label">Company Status</label>
                                         <select name="company_status" id="company_status" class="form-control">
-                                            <option value="Active" {{ $company->company_status == 'Active' ? 'selected' : '' }}>Active</option>
-                                            <option value="Inactive" {{ $company->company_status == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                                            <option value="active" {{ $company->company_status == 'active' ? 'selected' : '' }}>Active</option>
+                                            <option value="inactive" {{ $company->company_status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                         </select>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="letterhead">Upload Letterhead</label>
-                                        <input type="file" name="letterhead" id="letterhead" class="form-control">
-
-                                        @if($company->letterhead)
-                                            <p class="mt-2">Current Letterhead:</p>
-                                            <img src="{{ asset('storage/' . $company->letterhead) }}" alt="Letterhead" width="200">
-                                        @endif
-                                    </div>
                                     <!-- Company Logo -->
                                     <div class="col-md-6">
-                                        <label for="logo" class="form-label">Company Logo</label>
-                                        <input type="file" name="logo" id="logo" class="form-control">
+                                        <label for="company_logo" class="form-label">Company Logo</label>
+                                        <input type="file" name="company_logo" id="company_logo" class="form-control">
+
                                         @if($company->logo)
-                                            <div class="mt-2">
-                                                <img src="{{ asset($company->logo) }}" width="100" height="100" class="rounded border" alt="Logo">
-                                            </div>
+                                            <p class="mt-2">Current Logo:</p>
+                                            <img src="{{ asset('storage/' . $company->logo) }}" alt="Company Logo" width="100">
+                                        @else
+                                            <p class="mt-2 text-danger">No Logo Available</p>
                                         @endif
                                     </div>
+                                    <!-- Description -->
+                                    <div class="col-md-6">
+                                        <label for="company_description" class="form-label">Description</label>
+                                        <textarea name="company_description" id="company_description" class="form-control">{{ $company->company_description }}</textarea>
+                                    </div>
+
+                                    <!-- Address Fields -->
+                                    <div class="col-md-6">
+                                        <label for="address_line_1" class="form-label">Address Line 1</label>
+                                        <input type="text" name="address_line_1" id="address_line_1" class="form-control" value="{{ $company->address_line_1 }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="address_line_2" class="form-label">Address Line 2</label>
+                                        <input type="text" name="address_line_2" id="address_line_2" class="form-control" value="{{ $company->address_line_2 }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_city" class="form-label">City</label>
+                                        <input type="text" name="company_city" id="company_city" class="form-control" value="{{ $company->company_city }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_state" class="form-label">State</label>
+                                        <input type="text" name="company_state" id="company_state" class="form-control" value="{{ $company->company_state }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_country" class="form-label">Country</label>
+                                        <input type="text" name="company_country" id="company_country" class="form-control" value="{{ $company->company_country }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_zip_code" class="form-label">Zip Code</label>
+                                        <input type="text" name="company_zip_code" id="company_zip_code" class="form-control" value="{{ $company->company_zip_code }}">
+                                    </div>
+
+                                    <!-- Bank Details -->
+                                    <div class="col-md-6">
+                                        <label for="company_bank_name" class="form-label">Bank Name</label>
+                                        <input type="text" name="company_bank_name" id="company_bank_name" class="form-control" value="{{ $company->company_bank_name }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_bank_account_no" class="form-label">Bank Account Number</label>
+                                        <input type="text" name="company_bank_account_no" id="company_bank_account_no" class="form-control" value="{{ $company->company_bank_account_no }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_ifsc_code" class="form-label">IFSC Code</label>
+                                        <input type="text" name="company_ifsc_code" id="company_ifsc_code" class="form-control" value="{{ $company->company_ifsc_code }}">
+                                    </div>
+
+                                    <!-- Additional Details -->
+                                    <div class="col-md-6">
+                                        <label for="company_hr_contact" class="form-label">HR Contact</label>
+                                        <input type="text" name="company_hr_contact" id="company_hr_contact" class="form-control" value="{{ $company->company_hr_contact }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="gst_number" class="form-label">GST Number</label>
+                                        <input type="text" name="gst_number" id="gst_number" class="form-control" value="{{ $company->gst_number }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="epfo_number" class="form-label">EPFO Number</label>
+                                        <input type="text" name="epfo_number" id="epfo_number" class="form-control" value="{{ $company->epfo_number }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cin_number" class="form-label">CIN Number</label>
+                                        <input type="text" name="cin_number" id="cin_number" class="form-control" value="{{ $company->cin_number }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="company_pan_number" class="form-label">PAN Number</label>
+                                        <input type="text" name="company_pan_number" id="company_pan_number" class="form-control" value="{{ $company->company_pan_number }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="founded_date" class="form-label">Founded Date</label>
+                                        <input type="date" name="founded_date" id="founded_date" class="form-control" value="{{ $company->founded_date }}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="letterhead">Upload Letterhead</label>
+                                    <input type="file" name="letterhead" id="letterhead" class="form-control">
+
+                                    @if($company->letterhead)
+                                        <p class="mt-2">Current Letterhead:</p>
+                                        <img src="{{ asset('storage/' . $company->letterhead) }}" alt="Letterhead" width="200">
+                                    @endif
                                 </div>
 
                                 <div class="d-flex justify-content-end mt-4">
@@ -113,10 +143,10 @@
                                     <button type="submit" class="btn btn-primary">Update</button>
                                 </div>
                             </form>
-                        </div> <!-- End card-body -->
-                    </div> <!-- End card -->
-                </div> <!-- End col -->
-            </div> <!-- End row -->
-        </div> <!-- End container-fluid -->
-    </div> <!-- End page-content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

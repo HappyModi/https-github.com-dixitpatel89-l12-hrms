@@ -62,4 +62,9 @@ class Employee extends Model
         return $this->hasMany(Salary::class);
     }
 
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'employee_id');
+    }
+
 }

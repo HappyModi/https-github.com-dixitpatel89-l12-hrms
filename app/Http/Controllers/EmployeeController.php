@@ -14,10 +14,12 @@ use Dompdf\Options;
 
 class EmployeeController extends Controller
 {
+    
     public function index(Request $request)
 {
     // Get selected company_id from URL, fallback to authenticated user's company_id
-    $companyId = $request->query('company_id', auth()->user()->company_id);
+    $companyId  = session()->get('company_id');
+    // $companyId = $request->query('company_id', $company_id);
 
     // Fetch employees of the selected company and eager load the company relation
     $employees = Employee::with('company') // Move with() before get()
@@ -287,5 +289,11 @@ class EmployeeController extends Controller
         return response()->streamDownload(function () use ($dompdf, $letterType, $employee) {
             echo $dompdf->output();
         }, "{$letterNames[$letterType]}_{$employee->id}.pdf");
+    }
+
+    public function showDocuments($id)
+    {
+        $employee = Employee::with('documents.creator')->findOrFail($id);
+        return view('employee_documents', compact('employee'));
     }
 }

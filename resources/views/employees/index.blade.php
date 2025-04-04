@@ -65,7 +65,7 @@
                                                                 name="chk_child" value="{{ $employee->id }}">
                                                         </div>
                                                     </td>
-                                                    <td>{{ optional($employee->company)->name ?? 'N/A' }}</td>
+                                                    <td>{{ optional($employee->company)->company_name ?? 'N/A' }}</td>
                                                     <td>{{ $employee->full_name }}</td>
                                                     <td>{{ $employee->employee_email }}</td>
                                                     <td>{{ $employee->phone_number ?? 'N/A' }}</td>

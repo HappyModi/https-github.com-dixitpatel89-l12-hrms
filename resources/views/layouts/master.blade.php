@@ -16,6 +16,7 @@
 <body>
     <div id="layout-wrapper">
         @include('layouts.header')
+
         @include('layouts.sidebar')
 
         <div class='main-content'>

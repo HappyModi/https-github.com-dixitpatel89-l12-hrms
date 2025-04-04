@@ -1,156 +1,144 @@
 @extends('layouts.master')
 
 @section('content')
-<style>
-    .container {
-        width: 90%;
-        max-width: 1200px;
-        margin: auto;
-        padding: 30px;
-        background: #f4f7fc;
-        border-radius: 10px;
-        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .container h2 {
-        text-align: center;
-        color: #003366;
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 20px;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        background: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-group label {
-        font-weight: bold;
-        color: #003366;
-        font-size: 14px;
-        margin-bottom: 6px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        width: 100%;
-        padding: 12px;
-        font-size: 14px;
-        border: 2px solid #ccd6eb;
-        border-radius: 6px;
-        background: #f9fbff;
-    }
-
-    .submit-btn {
-        display: block;
-        width: 100%;
-        background: linear-gradient(to right, #0044cc, #002b80);
-        color: white;
-        padding: 14px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 18px;
-        font-weight: bold;
-    }
-</style>
-
-<div class="container">
-    <h2>Add Company</h2>
-    <form action="{{ route('companies.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        
-        <!-- Company Details Section -->
-        <h3>Company Details</h3>
-        <div class="form-grid">
-            <div class="form-group"><label>Company Name</label><input type="text" name="company_name" required></div>
-            <div class="form-group"><label>Logo</label><input type="file" name="logo"></div>
-            <div class="form-group"><label>Phone Number</label><input type="text" name="company_phone_number"></div>
-            <div class="form-group"><label>Email</label><input type="email" name="company_email"></div>
-            <div class="form-group"><label>Website</label><input type="text" name="website"></div>
-            <div class="form-group"><label>Industry</label><input type="text" name="industry"></div>
-            <div class="form-group"><label>Description</label><textarea name="company_description"></textarea></div>
-            <div class="form-group"><label>Company Type</label><select name="company_type">
-                <option value="Private">Private</option>
-                <option value="Public">Public</option>
-                <option value="Government">Government</option>
-                <option value="NGO">NGO</option>
-                <option value="Startup">Startup</option>
-            </select></div>
-            <div class="form-group"><label>Status</label><select name="company_status">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-            </select></div>
-        </div>
-
-        <!-- Address Section -->
-        <h3>Address</h3>
-        <div class="form-grid">
-            <div class="form-group"><label>Address Line 1</label><input type="text" name="address_line_1"></div>
-            <div class="form-group"><label>Address Line 2</label><input type="text" name="address_line_2"></div>
-            <div class="form-group"><label>City</label><input type="text" name="company_city"></div>
-            <div class="form-group"><label>State</label><input type="text" name="company_state"></div>
-            <div class="form-group"><label>Country</label><input type="text" name="company_country"></div>
-            <div class="form-group"><label>Zip Code</label><input type="text" name="company_zip_code"></div>
-        </div>
-        
-        <!-- Bank Details Section -->
-        <h3>Bank Details</h3>
-        <div class="form-grid">
-            <div class="form-group"><label>Bank Name</label><input type="text" name="company_bank_name"></div>
-            <div class="form-group"><label>Bank Account Number</label><input type="text" name="company_bank_account_no"></div>
-            <div class="form-group"><label>IFSC Code</label><input type="text" name="company_ifsc_code"></div>
-        </div>
-        
-        <!-- Additional Details -->
-        <h3>Additional Details</h3>
-        <div class="form-grid">
-            <div class="form-group"><label>Tax ID</label><input type="text" name="company_tax_id"></div>
-            <div class="form-group"><label>Registration Number</label><input type="text" name="company_registration_number"></div>
-            <div class="form-group"><label>HR Contact</label><input type="text" name="company_hr_contact"></div>
-            <div class="form-group"><label>Finance Contact</label><input type="text" name="company_finance_contact"></div>
-            <div class="form-group"><label>Support Email</label><input type="email" name="company_support_email"></div>
-            <div class="form-group"><label>Support Phone</label><input type="text" name="company_support_phone"></div>
-            <div class="form-group"><label>Legal Name</label><input type="text" name="company_legal_name"></div>
-            <div class="form-group"><label>Tax Percentage</label><input type="text" name="company_tax_percentage"></div>
-            <div class="form-group"><label>Currency</label><input type="text" name="company_currency"></div>
-            <div class="form-group"><label>GST Number</label><input type="text" name="gst_number"></div>
-            <div class="form-group"><label>EPFO Number</label><input type="text" name="epfo_number"></div>
-            <div class="form-group"><label>CIN Number</label><input type="text" name="cin_number"></div>
-            <div class="form-group"><label>PAN Number</label><input type="text" name="company_pan_number"></div>
-            <div class="form-group"><label>Founded Date</label><input type="date" name="founded_date"></div>
-            
-            <!-- Letterhead Upload -->
-            <div class="form-group">
-                <label>Upload Letterhead</label>
-                <input type="file" name="letterhead">
-            </div>
-            
-            <!-- Display Existing Letterhead -->
-            @if(isset($company->letterhead))
-                <div class="form-group">
-                    <label>Current Letterhead</label>
-                    <img src="{{ asset('storage/'.$company->letterhead) }}" class="img-thumbnail" width="200">
-                </div>
-            @endif
-        </div>
-        
-        <div class="text-center mt-4">
-            <button type="submit" class="submit-btn">Submit</button>
-        </div>
-    </form>
-</div>
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h2 class="mb-0">Add Company</h2>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('companies.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                
+                                <!-- Company Details Section -->
+                                <h4 class="mb-3">Company Details</h4>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Company Name</label>
+                                        <input type="text" class="form-control" name="company_name" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                    <label>Company Logo:</label>
+                                    <input type="file" name="logo">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="text" class="form-control" name="company_phone_number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" name="company_email">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Website</label>
+                                        <input type="text" class="form-control" name="website">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Industry</label>
+                                        <input type="text" class="form-control" name="industry">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control" name="company_description"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-control" name="company_status">
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Address Section -->
+                                <h4 class="mt-4">Address</h4>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Address Line 1</label>
+                                        <input type="text" class="form-control" name="address_line_1">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Address Line 2</label>
+                                        <input type="text" class="form-control" name="address_line_2">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" name="company_city">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">State</label>
+                                        <input type="text" class="form-control" name="company_state">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Country</label>
+                                        <input type="text" class="form-control" name="company_country">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Zip Code</label>
+                                        <input type="text" class="form-control" name="company_zip_code">
+                                    </div>
+                                </div>
+                                
+                                <!-- Bank Details Section -->
+                                <h4 class="mt-4">Bank Details</h4>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Bank Name</label>
+                                        <input type="text" class="form-control" name="company_bank_name">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Bank Account Number</label>
+                                        <input type="text" class="form-control" name="company_bank_account_no">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">IFSC Code</label>
+                                        <input type="text" class="form-control" name="company_ifsc_code">
+                                    </div>
+                                </div>
+                                
+                                <!-- Additional Details -->
+                                <h4 class="mt-4">Additional Details</h4>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">GST Number</label>
+                                        <input type="text" class="form-control" name="gst_number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">EPFO Number</label>
+                                        <input type="text" class="form-control" name="epfo_number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">CIN Number</label>
+                                        <input type="text" class="form-control" name="cin_number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">PAN Number</label>
+                                        <input type="text" class="form-control" name="company_pan_number">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Founded Date</label>
+                                        <input type="date" class="form-control" name="founded_date">
+                                    </div>
+                                    
+                                    <!-- Letterhead Upload -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">Upload Letterhead</label>
+                                        <input type="file" class="form-control" name="letterhead">
+                                    </div>
+                                </div>
+                                
+                                <!-- Submit Button -->
+                                <div class="text-center mt-4">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div> <!-- End Card Body -->
+                    </div> <!-- End Card -->
+                </div> <!-- End Col -->
+            </div> <!-- End Row -->
+        </div> <!-- End Container -->
+    </div> <!-- End Page Content -->
 @endsection

@@ -28,12 +28,16 @@ class TemplateController extends Controller
             'letter_body' => 'required',
             'company_id' => 'required|exists:companies,id'
         ]);
-
-        Template::create($request->all());
-        return redirect()->route('templates.index')->with('success', 'Template added successfully!');
+    
+        $template = Template::create($request->all());
+        
+        if ($template) {
+            return redirect()->route('templates.index')->with('success', 'Template added successfully!');
+        } else {
+            return back()->with('error', 'Failed to save template.');
+        }
     }
-
-    public function edit($id)
+        public function edit($id)
 {
     $template = Template::findOrFail($id);
     return view('templates.edit', compact('template'));

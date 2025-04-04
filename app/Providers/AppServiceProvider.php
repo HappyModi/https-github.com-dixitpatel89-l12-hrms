@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Employee;
 use App\Observers\EmployeeObserver;
 use App\Observers\CompanyObserver;
+use Illuminate\Support\Facades\Session;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,16 +23,20 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot()
+    
+     public function boot()
     {
-        // View Composer for sharing companies with all views
-        View::composer('*', function ($view) {
-            $companies = Company::all();
-            $view->with('companies', $companies);
-        });
+        // Share the list of companies and the selected company with all views
+        // View::composer('*', function ($view) {
+        //     $companies = Company::all();
+        //     $selectedCompany = Session::get('selected_company');
 
-        // Register Observers
-        Employee::observe(EmployeeObserver::class);
-        Company::observe(CompanyObserver::class);
+        //     $view->with([
+        //         'companies' => $companies, 
+        //         'selectedCompany' => $selectedCompany
+        //     ]);
+        // });
     }
 }
+
+
